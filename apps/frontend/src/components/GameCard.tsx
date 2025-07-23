@@ -35,15 +35,14 @@ const formatPlaytime = (minutes: number) => {
 };
 
 export const GameCard = ({ game }: Props) => (
-  <div className="group relative bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl">
+  <div className="group relative card overflow-hidden transition-all duration-300 transform hover:-translate-y-2">
     <div className="relative">
       <img 
         src={game.background_image} 
         alt={game.name} 
         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent hover:scale-105" />
-      
+      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent hover:translate-y-2" />
       <div className="absolute top-3 right-3 flex items-center space-x-2">
         {game.metacritic && (
           <div className="bg-yellow-500 text-black px-2 py-1 rounded-md text-xs font-bold">
