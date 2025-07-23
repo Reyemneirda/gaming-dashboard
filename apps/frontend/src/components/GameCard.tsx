@@ -40,12 +40,9 @@ const formatPlaytime = (minutes: number) => {
 export const GameCard = ({ game, isPinned, onPin, onUnpin }: Props) => {
 
   const handlePinToggle = () => {
-    console.log('handlePinToggle', isPinned);
     if (isPinned && onUnpin) {
-      console.log('unpinning game', game.name);
       onUnpin(game);
     } else if (!isPinned && onPin) {
-      console.log('pinning game', game.name);
       onPin(game);
     }
   };

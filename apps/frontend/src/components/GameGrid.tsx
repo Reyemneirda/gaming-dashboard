@@ -12,6 +12,8 @@ export const GameGrid = ({ games, loading = false, error }: Props) => {
   const { pinGame, unpinGame, isGamePinned } = useGameContext();
   if (loading) {
     return (
+      <div className="space-y-6">
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, index) => (
           <div key={index} className="bg-gray-800 rounded-xl p-4 animate-pulse">
@@ -26,6 +28,7 @@ export const GameGrid = ({ games, loading = false, error }: Props) => {
             </div>
           </div>
         ))}
+      </div>
       </div>
     );
   }
