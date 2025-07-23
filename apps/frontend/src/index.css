@@ -92,9 +92,15 @@ h1 {
   line-height: 1.1;
   background: linear-gradient(135deg, var(--primary-purple), var(--accent-cyan));
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 5vw, 1.5rem);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  -webkit-text-fill-color: transparent;
 }
 
 p {
