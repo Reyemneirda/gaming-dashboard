@@ -1,8 +1,11 @@
 import type { Game } from "../services/rawg";
-import { Star, Calendar, Clock, Users, Gamepad2, Tag } from "lucide-react";
+import { Star, Calendar, Clock, Users, Gamepad2, Tag, Plus, Heart } from "lucide-react";
 
 type Props = {
   game: Game;
+  isPinned: boolean;
+  onPin: (game: Game) => void;
+  onUnpin: (game: Game) => void;
 };
 
 const getRatingColor = (rating: number) => {
@@ -34,7 +37,19 @@ const formatPlaytime = (minutes: number) => {
   return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
 };
 
-export const GameCard = ({ game }: Props) => (
+export const GameCard = ({ game, isPinned, onPin, onUnpin }: Props) => {
+
+  const handlePinToggle = () => {
+    console.log('handlePinToggle', isPinned);
+    if (isPinned && onUnpin) {
+      console.log('unpinning game', game.name);
+      onUnpin(game);
+    } else if (!isPinned && onPin) {
+      console.log('pinning game', game.name);
+      onPin(game);
+    }
+  };
+  return (
   <div className="group relative card overflow-hidden transition-all duration-300 transform hover:-translate-y-2">
     <div className="relative">
       <img 
@@ -53,6 +68,18 @@ export const GameCard = ({ game }: Props) => (
           <Star className={`w-3 h-3 ${getRatingColor(game.rating)}`} />
           <span className="text-xs font-medium text-white">{game.rating.toFixed(1)}</span>
         </div>
+      </div>
+      <div className="absolute top-3 left-3 flex items-center space-x-2">
+        <button
+          onClick={handlePinToggle}
+          className={`p-1 rounded-md backdrop-blur-sm transition-all ${
+            isPinned 
+              ? 'bg-red-500/80 text-white hover:bg-red-600/80' 
+              : 'bg-gray-900/80 text-gray-300 hover:text-red-400 hover:bg-gray-800/90'
+          }`}
+        >
+          <Heart className={`w-4 h-4 ${isPinned ? 'fill-current' : ''}`} />
+        </button>
       </div>
     </div>
 
@@ -140,5 +167,6 @@ export const GameCard = ({ game }: Props) => (
 
     <div className="absolute inset-0 bg-gradient-to-t from-blue-600/0 via-transparent to-blue-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
   </div>
-);
+  )
+};
   

@@ -1,10 +1,12 @@
 import { GameLibrary } from "./components/GameLibrary"; 
-
+import { GameProvider } from "./context/GameContext";
 export default function App() {
 
   return (
-    <div className="min-h-screen flex">
-      <GameLibrary />
-    </div>
+    <GameProvider>
+      <div className="min-h-screen flex">
+        <GameLibrary />
+      </div>
+    </GameProvider>
   );
 }

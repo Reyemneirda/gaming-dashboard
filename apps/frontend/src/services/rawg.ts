@@ -1,5 +1,4 @@
-const API_KEY = import.meta.env.VITE_RAWG_KEY;
-const BASE = "https://api.rawg.io/api";
+import { RAWG_API_KEY, RAWG_BASE } from "../config";
 
 export interface Platform {
   id: number;
@@ -132,13 +131,13 @@ export async function getPopularGames(options: PaginationOptions = {}): Promise<
   const { page = 1, pageSize = 20, ordering = '-rating' } = options;
   
   const params = new URLSearchParams({
-    key: API_KEY,
+    key: RAWG_API_KEY,
     ordering,
     page_size: pageSize.toString(),
     page: page.toString(),
   });
   
-  const res = await fetch(`${BASE}/games?${params}`);
+  const res = await fetch(`${RAWG_BASE}/games?${params}`);
   if (!res.ok) {
     throw new Error(`Failed to fetch games: ${res.statusText}`);
   }
@@ -156,14 +155,14 @@ export async function searchGames(query: string, options: PaginationOptions = {}
   const { page = 1, pageSize = 20, ordering = '-rating' } = options;
   
   const params = new URLSearchParams({
-    key: API_KEY,
+    key: RAWG_API_KEY,
     search: query,
     ordering,
     page_size: pageSize.toString(),
     page: page.toString(),
   });
   
-  const res = await fetch(`${BASE}/games?${params}`);
+  const res = await fetch(`${RAWG_BASE}/games?${params}`);
   if (!res.ok) {
     throw new Error(`Failed to search games: ${res.statusText}`);
   }

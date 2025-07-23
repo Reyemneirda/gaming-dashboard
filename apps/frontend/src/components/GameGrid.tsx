@@ -1,3 +1,4 @@
+import { useGameContext } from "../context/GameContext";
 import type { Game } from "../services/rawg";
 import { GameCard } from "./GameCard";
 
@@ -8,6 +9,7 @@ type Props = {
 };
 
 export const GameGrid = ({ games, loading = false, error }: Props) => {
+  const { pinGame, unpinGame, isGamePinned } = useGameContext();
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -65,7 +67,7 @@ export const GameGrid = ({ games, loading = false, error }: Props) => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {games.map((game) => (
-          <GameCard key={game.id} game={game} />
+          <GameCard key={game.id} game={game} isPinned={isGamePinned(game.name)} onPin={pinGame} onUnpin={unpinGame} />
         ))}
       </div>
       
