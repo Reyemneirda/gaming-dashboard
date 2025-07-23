@@ -1,5 +1,7 @@
 import type { Game } from "../services/rawg";
 import { Star, Calendar, Clock, Users, Gamepad2, Tag, Plus, Heart } from "lucide-react";
+import { useState } from "react";
+import { useGameContext } from "../context/GameContext";
 
 type Props = {
   game: Game;
@@ -38,6 +40,9 @@ const formatPlaytime = (minutes: number) => {
 };
 
 export const GameCard = ({ game, isPinned, onPin, onUnpin }: Props) => {
+  const { addSession } = useGameContext();
+  const [showSessionModal, setShowSessionModal] = useState(false);
+  const [sessionHours, setSessionHours] = useState('');
 
   const handlePinToggle = () => {
     if (isPinned && onUnpin) {
@@ -45,6 +50,30 @@ export const GameCard = ({ game, isPinned, onPin, onUnpin }: Props) => {
     } else if (!isPinned && onPin) {
       onPin(game);
     }
+  };
+
+  const handleAddSession = () => {
+    setShowSessionModal(true);
+  };
+
+  const handleSessionSubmit = async () => {
+    if (!sessionHours) return;
+    
+    const hours = parseFloat(sessionHours);
+    if (isNaN(hours) || hours <= 0) return;
+    
+    try {
+      await addSession(game.name, Math.round(hours * 60));
+      setShowSessionModal(false);
+      setSessionHours('');
+    } catch (err) {
+      console.error('Error adding session:', err);
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowSessionModal(false);
+    setSessionHours('');
   };
   return (
   <div className="group relative card overflow-hidden transition-all duration-300 transform hover:-translate-y-2">
@@ -76,6 +105,13 @@ export const GameCard = ({ game, isPinned, onPin, onUnpin }: Props) => {
           }`}
         >
           <Heart className={`w-4 h-4 ${isPinned ? 'fill-current' : ''}`} />
+        </button>
+        <button
+          onClick={handleAddSession}
+          className="p-1 rounded-md backdrop-blur-sm transition-all bg-gray-900/80 text-gray-300 hover:text-blue-400 hover:bg-gray-800/90"
+          title="Add session"
+        >
+          <Plus className="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -163,6 +199,56 @@ export const GameCard = ({ game, isPinned, onPin, onUnpin }: Props) => {
     </div>
 
     <div className="absolute inset-0 bg-gradient-to-t from-blue-600/0 via-transparent to-blue-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+    
+    {/* Session Modal */}
+    {showSessionModal && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-slate-800 rounded-xl p-6 w-96 max-w-[90vw]">
+          <h3 className="text-xl font-semibold text-white mb-4">
+            Add Session - {game.name}
+          </h3>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Hours Played
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              min="0"
+              value={sessionHours}
+              onChange={(e) => setSessionHours(e.target.value)}
+              placeholder="ex: 2.5"
+              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSessionSubmit();
+                } else if (e.key === 'Escape') {
+                  handleModalClose();
+                }
+              }}
+              autoFocus
+            />
+          </div>
+          
+          <div className="flex space-x-3">
+            <button
+              onClick={handleSessionSubmit}
+              disabled={!sessionHours || parseFloat(sessionHours) <= 0}
+              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Add
+            </button>
+            <button
+              onClick={handleModalClose}
+              className="flex-1 bg-slate-600 text-white py-2 px-4 rounded-lg hover:bg-slate-700 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
   </div>
   )
 };

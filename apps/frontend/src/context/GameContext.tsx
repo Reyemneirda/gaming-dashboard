@@ -13,6 +13,7 @@ interface GameContextType {
     pinGame: (game: Game) => Promise<void>;
     unpinGame: (game: Game) => Promise<void>;
     isGamePinned: (gameName: string) => boolean;
+    addSession: (gameName: string, minutes: number) => Promise<void>;
     refreshData: () => Promise<void>;
 }
 
@@ -86,6 +87,20 @@ export const useGameContext = () => {
       const isGamePinned = (gameName: string) => {
         return pinnedItems.games.includes(gameName);
       };
+
+      const addSession = async (gameName: string, minutes: number) => {
+        try {
+          await apiService.addPlaySession({
+            game: gameName,
+            minutes: minutes
+          });
+          // Refresh data to get updated stats
+          await refreshData();
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Error adding session');
+          throw err;
+        }
+      };
     
       useEffect(() => {
         refreshData();
@@ -98,6 +113,7 @@ export const useGameContext = () => {
         pinGame,
         unpinGame,
         isGamePinned,
+        addSession,
         refreshData,
         gameStats,
         detailedStats
