@@ -1,0 +1,11 @@
+{
+    "name": "gaming-dashboard",
+    "scripts": {
+        "dev": "concurrently \"bun:start-back\" \"bun:start-front\"",
+        "start-back": "python -m uvicorn apps.backend.main:app --reload --port 8000",
+        "start-front": "bun run --cwd apps/frontend dev"
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.0"
+    }
+}
