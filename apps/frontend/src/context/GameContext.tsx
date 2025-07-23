@@ -1,4 +1,4 @@
-import { apiService, type PinnedItems } from '../services/api';
+import { apiService, type DetailedStats, type GameStats, type PinnedItems } from '../services/api';
 import type { Game } from '../services/rawg';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
@@ -7,7 +7,9 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 interface GameContextType {
     pinnedItems: PinnedItems;
     loading: boolean;
-    error: string | null;
+    error: string | null;    
+    gameStats: GameStats;
+    detailedStats: DetailedStats;
     pinGame: (game: Game) => Promise<void>;
     unpinGame: (game: Game) => Promise<void>;
     isGamePinned: (gameName: string) => boolean;
@@ -30,16 +32,23 @@ export const useGameContext = () => {
 
   export const GameProvider = ({ children }: GameProviderProps) => {
     const [pinnedItems, setPinnedItems] = useState<PinnedItems>({ games: [] });
+    const [gameStats, setGameStats] = useState<GameStats>({});
+    const [detailedStats, setDetailedStats] = useState<DetailedStats>({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
     const refreshData = async () => {
         try {
           setLoading(true);
           setError(null);
     
-          const [pinned] = await Promise.all([
+           const [pinned, stats, detailed] = await Promise.all([
             apiService.getPinnedItems(),
-          ])
+            apiService.getStats(),
+            apiService.getDetailedStats(),
+          ]);
+          setGameStats(stats);
+          setDetailedStats(detailed);
           setPinnedItems(pinned);
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Une erreur est survenue');
@@ -51,8 +60,7 @@ export const useGameContext = () => {
     
       const pinGame = async (game: Game) => {
         try {
-            console.log('pinning game', game.name);
-          await apiService.pinItem({ value: game.name });
+          await apiService.pinItem({ value: game.name, type: 'game' });
           setPinnedItems(prev => ({
             ...prev,
             games: [...prev.games, game.name]
@@ -65,7 +73,7 @@ export const useGameContext = () => {
     
       const unpinGame = async (game: Game) => {
         try {
-          await apiService.unpinItem({ value: game.name });
+          await apiService.unpinItem({ value: game.name, type: 'game' });
           setPinnedItems(prev => ({
             ...prev,
             games: prev.games.filter(name => name !== game.name)
@@ -91,6 +99,8 @@ export const useGameContext = () => {
         unpinGame,
         isGamePinned,
         refreshData,
+        gameStats,
+        detailedStats
       };
     
       return (
