@@ -14,7 +14,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
+}
+
+
+@theme {
   --primary-purple: #8b5cf6;
   --primary-blue: #3b82f6;
   --accent-cyan: #06b6d4;
@@ -33,15 +36,6 @@
 *::selection {
   background: rgba(139, 92, 246, 0.3);
   color: #f1f5f9;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background: inherit;
-  overflow-x: hidden;
 }
 
 body::before {
@@ -94,7 +88,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.5rem, 5vw, 2rem);
   line-height: 1.1;
   background: linear-gradient(135deg, var(--primary-purple), var(--accent-cyan));
   -webkit-background-clip: text;
@@ -203,31 +197,3 @@ input:focus, textarea:focus, select:focus {
   opacity: 0.8;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #1e293b;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --surface-dark: rgba(255, 255, 255, 0.8);
-    --surface-light: rgba(248, 250, 252, 0.9);
-    --border-subtle: rgba(100, 116, 139, 0.2);
-    --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.1);
-  }
-  
-  body::before {
-    background: 
-      radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
-      radial-gradient(circle at 40% 60%, rgba(6, 182, 212, 0.03) 0%, transparent 50%);
-  }
-  
-  button {
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--text-primary);
-  }
-  
-  button:hover {
-    background: rgba(139, 92, 246, 0.05);
-  }
-}

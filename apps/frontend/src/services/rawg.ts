@@ -115,8 +115,64 @@ export interface Game {
   short_screenshots: ShortScreenshot[];
 }
 
-export async function getPopularGames(count = 10): Promise<Game[]> {
-  const res = await fetch(`${BASE}/games?key=${API_KEY}&ordering=-rating&page_size=${count}`);
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export interface PaginationOptions {
+  page?: number;
+  pageSize?: number;
+  ordering?: string;
+}
+
+export async function getPopularGames(options: PaginationOptions = {}): Promise<PaginatedResponse<Game>> {
+  const { page = 1, pageSize = 20, ordering = '-rating' } = options;
+  
+  const params = new URLSearchParams({
+    key: API_KEY,
+    ordering,
+    page_size: pageSize.toString(),
+    page: page.toString(),
+  });
+  
+  const res = await fetch(`${BASE}/games?${params}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch games: ${res.statusText}`);
+  }
+  
   const json = await res.json();
-  return json.results;
+  return {
+    count: json.count,
+    next: json.next,
+    previous: json.previous,
+    results: json.results,
+  };
+}
+
+export async function searchGames(query: string, options: PaginationOptions = {}): Promise<PaginatedResponse<Game>> {
+  const { page = 1, pageSize = 20, ordering = '-rating' } = options;
+  
+  const params = new URLSearchParams({
+    key: API_KEY,
+    search: query,
+    ordering,
+    page_size: pageSize.toString(),
+    page: page.toString(),
+  });
+  
+  const res = await fetch(`${BASE}/games?${params}`);
+  if (!res.ok) {
+    throw new Error(`Failed to search games: ${res.statusText}`);
+  }
+  
+  const json = await res.json();
+  return {
+    count: json.count,
+    next: json.next,
+    previous: json.previous,
+    results: json.results,
+  };
 }
