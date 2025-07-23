@@ -75,7 +75,7 @@ export const GameCard = ({ game }: Props) => (
           </div>
         </div>
 
-        {game.genres.length > 0 && (
+        {game?.genres?.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {game.genres.slice(0, 3).map((genre) => (
               <span
@@ -86,7 +86,7 @@ export const GameCard = ({ game }: Props) => (
                 {genre.name}
               </span>
             ))}
-            {game.genres.length > 3 && (
+            {game?.genres?.length > 3 && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-600/20 text-gray-300 border border-gray-600/30">
                 +{game.genres.length - 3}
               </span>
@@ -94,7 +94,7 @@ export const GameCard = ({ game }: Props) => (
           </div>
         )}
 
-        {game.platforms.length > 0 && (
+        {game?.platforms?.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {game.platforms.slice(0, 3).map((platformInfo) => (
               <span
@@ -105,7 +105,7 @@ export const GameCard = ({ game }: Props) => (
                 {platformInfo.platform.name}
               </span>
             ))}
-            {game.platforms.length > 3 && (
+            {game?.platforms?.length > 3 && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-600/20 text-gray-300 border border-gray-600/30">
                 +{game.platforms.length - 3}
               </span>
@@ -123,7 +123,7 @@ export const GameCard = ({ game }: Props) => (
           </div>
         </div>
 
-        {game.stores.length > 0 && (
+        {game?.stores?.length > 0 && (
           <div className="flex flex-wrap gap-1 pt-2">
             {game.stores.slice(0, 2).map((storeInfo) => (
               <span
