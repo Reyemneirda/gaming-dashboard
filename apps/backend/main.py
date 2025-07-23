@@ -1,11 +1,18 @@
 from . import firebase_service as fs
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from datetime import datetime
 
 app = FastAPI(title="Gaming Dashboard API", version="1.0.0")
 
+class PlaySession(BaseModel):
+    game: str
+    minutes: int
+    date: str = Field(default=datetime.now().isoformat())
+
 class PinItem(BaseModel):
+    type: str
     value: str
 
 app.add_middleware(
@@ -20,6 +27,32 @@ app.add_middleware(
 async def root():
     return {"message": "Gaming Dashboard API", "version": "1.0.0"}
     
+
+@app.get("/api/stats", response_model=dict)
+async def get_stats():
+    try:
+        stats = fs.get_game_stats()
+        return {"success": True, "data": stats}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/stats/detailed")
+async def get_detailed_stats():
+    try:
+        stats = fs.get_detailed_stats()
+        return {"success": True, "data": stats}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/session")
+async def add_session(session: PlaySession):
+    try:
+        result = fs.add_play_session(session.model_dump())
+        return {"success": True, "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 @app.get("/api/pinned")
 async def get_pinned():
