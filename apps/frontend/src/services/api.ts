@@ -80,6 +80,20 @@ class ApiService {
       body: JSON.stringify(item),
     });
   }
+
+  async getLiveStats(): Promise<{data: DetailedStats, timestamp: string, last_updated: string}> {
+    return this.request('/live/stats');
+  }
+
+  async refreshData(): Promise<any> {
+    return this.request('/admin/refresh-data', {
+      method: 'POST',
+    });
+  }
+
+  async getTrendingGames(): Promise<any> {
+    return this.request('/trending');
+  }
 }
 
 export const apiService = new ApiService();
