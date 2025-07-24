@@ -70,7 +70,7 @@ export const SearchBar = ({ onSearch, onFilterChange, loading = false }: Props) 
           value={searchQuery}
           onChange={(e) => handleSearch(e.target.value)}
           placeholder="Search for a game..."
-          className="block w-full pr-12s pl-20 py-3"
+          className="block w-full pr-12 pl-20 py-3"
           disabled={loading}
           style={{
             borderRadius: "12px, 12px, 12px, 12px",
