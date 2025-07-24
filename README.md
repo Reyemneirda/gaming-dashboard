@@ -31,10 +31,15 @@ python main.py
 ### Frontend  
 ```bash
 cd apps/frontend
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
+As a monorepo, you can just be on the root  and run both with
+```bash
+bun install
+bun run dev
+```
 ### Environment setup
 You'll need:
 - Firebase project with Realtime Database enabled
