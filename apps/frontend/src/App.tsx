@@ -1,8 +1,9 @@
-import { BarChart3, Grid3X3 } from "lucide-react";
+import { BarChart3, Grid3X3, TrendingUp } from "lucide-react";
 import { GameLibrary } from "./components/GameLibrary"; 
 import { GameProvider } from "./context/GameContext";
 import { useState } from "react";
 import { DashboardHome } from "./components/Dashboard";
+import { GameComparison } from "./components/GameComparison";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -10,6 +11,7 @@ export default function App() {
     const navigation = [
       { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
       { id: 'library', name: 'Game Library', icon: Grid3X3 },
+      { id: 'comparison', name: 'Compare Games', icon: TrendingUp },
     ];
 
   return (
@@ -46,6 +48,7 @@ export default function App() {
         </aside>
       {activeSection === 'dashboard' && <DashboardHome />}
       {activeSection === 'library' && <GameLibrary />}
+      {activeSection === 'comparison' && <GameComparison />}
       </div>  
     </GameProvider>
   );
