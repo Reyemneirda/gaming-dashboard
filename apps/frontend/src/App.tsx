@@ -46,9 +46,11 @@ export default function App() {
             })}
           </nav>          
         </aside>
-      {activeSection === 'dashboard' && <DashboardHome />}
-      {activeSection === 'library' && <GameLibrary />}
-      {activeSection === 'comparison' && <GameComparison />}
+        <div className="flex-1">
+          {activeSection === 'dashboard' && <DashboardHome />}
+          {activeSection === 'library' && <GameLibrary />}
+          {activeSection === 'comparison' && <GameComparison />}
+        </div>
       </div>  
     </GameProvider>
   );
