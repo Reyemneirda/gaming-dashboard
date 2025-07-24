@@ -54,7 +54,9 @@ export const SearchBar = ({ onSearch, onFilterChange, loading = false }: Props) 
 
   const clearFilters = () => {
     setFilters({});
+    setSearchQuery("");
     onFilterChange({});
+    onSearch("");
   };
 
   const years = Array.from({ length: 25 }, (_, i) => new Date().getFullYear() - i);
@@ -149,7 +151,7 @@ export const SearchBar = ({ onSearch, onFilterChange, loading = false }: Props) 
                 <option value="action">Action</option>
                 <option value="adventure">Aventure</option>
                 <option value="rpg">RPG</option>
-                <option value="strategy">Stratégie</option>
+                <option value="strategy">Strategy</option>
                 <option value="simulation">Simulation</option>
                 <option value="sports">Sports</option>
                 <option value="puzzle">Puzzle</option>

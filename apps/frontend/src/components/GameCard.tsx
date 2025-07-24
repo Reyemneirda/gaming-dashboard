@@ -139,14 +139,14 @@ export const GameCard = ({ game, isPinned, onPin, onUnpin, onGenreClick }: Props
         {game?.genres?.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {game.genres.slice(0, 3).map((genre) => (
-              <button
+              <span
                 key={genre.id}
                 onClick={() => onGenreClick?.(genre.name)}
                 className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-600/20 text-blue-300 border border-blue-600/30 hover:bg-blue-600/30 hover:text-blue-200 transition-colors cursor-pointer"
               >
                 <Tag className="w-3 h-3 mr-1" />
                 {genre.name}
-              </button>
+              </span>
             ))}
             {game?.genres?.length > 3 && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-600/20 text-gray-300 border border-gray-600/30">

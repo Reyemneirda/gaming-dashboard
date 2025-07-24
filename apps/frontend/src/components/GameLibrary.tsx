@@ -65,8 +65,15 @@ export const GameLibrary = () => {
     setFilters(newFilters);
   };
 
+  const handleClearFilter = (filterType: keyof FilterOptions) => {
+    const updatedFilters = { ...filters };
+    delete updatedFilters[filterType];
+    setFilters(updatedFilters);
+  };
+
   const handleGenreClick = (genre: string) => {
-    setFilters(prev => ({ ...prev, genre }));
+    handleFilterChange({ genre: genre });
+    loadGames(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -128,6 +135,8 @@ export const GameLibrary = () => {
           loading={loading}
           error={error || undefined}
           onGenreClick={handleGenreClick}
+          filters={filters}
+          onClearFilter={handleClearFilter}
         />
 
         {!loading && !error && totalPages > 1 && (
