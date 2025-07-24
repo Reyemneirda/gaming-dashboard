@@ -7,7 +7,6 @@ import { Pagination } from "./Pagination";
 
 export const GameLibrary = () => {
   const [games, setGames] = useState<Game[]>([]);
-  const [filteredGames, setFilteredGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,9 +36,9 @@ export const GameLibrary = () => {
       let response: PaginatedResponse<Game>;
       
       if (searchQuery) {
-        response = await searchGames(searchQuery, { page, pageSize: itemsPerPage });
+        response = await searchGames(searchQuery, { page, pageSize: itemsPerPage, ...filters });
       } else {
-        response = await getPopularGames({ page, pageSize: itemsPerPage });
+        response = await getPopularGames({ page, pageSize: itemsPerPage, ...filters });
       }
       
       setPagination(response);
@@ -47,8 +46,6 @@ export const GameLibrary = () => {
       setTotalItems(response.count);
       setTotalPages(Math.ceil(response.count / itemsPerPage));
       setCurrentPage(page);
-      
-      applyFiltersToResults(response.results);
     } catch (err) {
       setError("Error loading games");
       console.error("Error:", err);
@@ -72,46 +69,14 @@ export const GameLibrary = () => {
   };
 
   const handleGenreClick = (genre: string) => {
-    handleFilterChange({ genre: genre });
-    loadGames(1);
+    const newFilters = { ...filters, genre: genre };
+    setFilters(newFilters);
   };
 
   const handlePageChange = (page: number) => {
     loadGames(page);
   };
 
-  const applyFiltersToResults = (results: Game[]) => {
-    let filtered = [...results];
-
-    if (filters.rating) {
-      filtered = filtered.filter((game) => game.rating >= filters.rating!);
-    }
-
-    if (filters.year) {
-      filtered = filtered.filter((game) => {
-        const gameYear = new Date(game.released).getFullYear();
-        return gameYear === filters.year;
-      });
-    }
-
-    if (filters.genre) {
-      filtered = filtered.filter((game) =>
-        game.genres.some((genre) =>
-          genre.name.toLowerCase().includes(filters.genre!.toLowerCase())
-        )
-      );
-    }
-
-    if (filters.platform) {
-      filtered = filtered.filter((game) =>
-        game.platforms.some((platform) =>
-          platform.platform.name.toLowerCase().includes(filters.platform!.toLowerCase())
-        )
-      );
-    }
-
-    setFilteredGames(filtered);
-  };
 
   return (
     <div className="p-6 space-y-8">
@@ -131,7 +96,7 @@ export const GameLibrary = () => {
         />
 
         <GameGrid
-          games={filteredGames}
+          games={games}
           loading={loading}
           error={error || undefined}
           onGenreClick={handleGenreClick}

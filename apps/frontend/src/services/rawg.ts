@@ -127,8 +127,17 @@ export interface PaginationOptions {
   ordering?: string;
 }
 
-export async function getPopularGames(options: PaginationOptions = {}): Promise<PaginatedResponse<Game>> {
-  const { page = 1, pageSize = 20, ordering = '-rating' } = options;
+export interface FilterOptions {
+  genre?: string;
+  platform?: string;
+  rating?: number;
+  year?: number;
+}
+
+export interface GameOptions extends PaginationOptions, FilterOptions {}
+
+export async function getPopularGames(options: GameOptions = {}): Promise<PaginatedResponse<Game>> {
+  const { page = 1, pageSize = 20, ordering = '-rating', genre, platform, rating, year } = options;
   
   const params = new URLSearchParams({
     key: RAWG_API_KEY,
@@ -136,6 +145,20 @@ export async function getPopularGames(options: PaginationOptions = {}): Promise<
     page_size: pageSize.toString(),
     page: page.toString(),
   });
+
+  // Add filters
+  if (genre) {
+    params.append('genres', genre.toLowerCase());
+  }
+  if (platform) {
+    params.append('platforms', platform.toLowerCase());
+  }
+  if (rating) {
+    params.append('metacritic', `${Math.round(rating * 20)},100`); // Convert 5-star to metacritic scale
+  }
+  if (year) {
+    params.append('dates', `${year}-01-01,${year}-12-31`);
+  }
   
   const res = await fetch(`${RAWG_BASE}/games?${params}`);
   if (!res.ok) {
@@ -151,8 +174,8 @@ export async function getPopularGames(options: PaginationOptions = {}): Promise<
   };
 }
 
-export async function searchGames(query: string, options: PaginationOptions = {}): Promise<PaginatedResponse<Game>> {
-  const { page = 1, pageSize = 20, ordering = '-rating' } = options;
+export async function searchGames(query: string, options: GameOptions = {}): Promise<PaginatedResponse<Game>> {
+  const { page = 1, pageSize = 20, ordering = '-rating', genre, platform, rating, year } = options;
   
   const params = new URLSearchParams({
     key: RAWG_API_KEY,
@@ -161,6 +184,20 @@ export async function searchGames(query: string, options: PaginationOptions = {}
     page_size: pageSize.toString(),
     page: page.toString(),
   });
+
+  // Add filters
+  if (genre) {
+    params.append('genres', genre.toLowerCase());
+  }
+  if (platform) {
+    params.append('platforms', platform.toLowerCase());
+  }
+  if (rating) {
+    params.append('metacritic', `${Math.round(rating * 20)},100`); // Convert 5-star to metacritic scale
+  }
+  if (year) {
+    params.append('dates', `${year}-01-01,${year}-12-31`);
+  }
   
   const res = await fetch(`${RAWG_BASE}/games?${params}`);
   if (!res.ok) {
