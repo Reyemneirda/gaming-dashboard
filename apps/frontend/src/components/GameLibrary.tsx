@@ -5,6 +5,39 @@ import { SearchBar, type FilterOptions } from "./SearchBar";
 import { GameGrid } from "./GameGrid";
 import { Pagination } from "./Pagination";
 
+interface CacheEntry {
+  data: PaginatedResponse<Game>;
+  timestamp: number;
+}
+
+const gameCache = new Map<string, CacheEntry>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+const generateCacheKey = (searchQuery: string, filters: FilterOptions, page: number, pageSize: number) => {
+  const key = {
+    search: searchQuery,
+    filters: Object.keys(filters).length > 0 ? filters : {},
+    page,
+    pageSize
+  };
+  return JSON.stringify(key);
+};
+
+const isCacheValid = (entry: CacheEntry) => {
+  return Date.now() - entry.timestamp < CACHE_DURATION;
+};
+
+const cleanupCache = () => {
+  const now = Date.now();
+  for (const [key, entry] of gameCache.entries()) {
+    if (now - entry.timestamp >= CACHE_DURATION) {
+      gameCache.delete(key);
+    }
+  }
+};
+
+setInterval(cleanupCache, 10 * 60 * 1000); // 10 minutes
+
 export const GameLibrary = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +66,24 @@ export const GameLibrary = () => {
       setLoading(true);
       setError(null);
       
+      // Generate cache key
+      const cacheKey = generateCacheKey(searchQuery, filters, page, itemsPerPage);
+      
+      // Check cache first
+      const cachedEntry = gameCache.get(cacheKey);
+      if (cachedEntry && isCacheValid(cachedEntry)) {
+        // Use cached data
+        const response = cachedEntry.data;
+        setPagination(response);
+        setGames(response.results);
+        setTotalItems(response.count);
+        setTotalPages(Math.ceil(response.count / itemsPerPage));
+        setCurrentPage(page);
+        setLoading(false);
+        return;
+      }
+      
+      // Make API call if not in cache or cache expired
       let response: PaginatedResponse<Game>;
       
       if (searchQuery) {
@@ -40,6 +91,12 @@ export const GameLibrary = () => {
       } else {
         response = await getPopularGames({ page, pageSize: itemsPerPage, ...filters });
       }
+      
+      // Cache the response
+      gameCache.set(cacheKey, {
+        data: response,
+        timestamp: Date.now()
+      });
       
       setPagination(response);
       setGames(response.results);
