@@ -8,6 +8,7 @@ type Props = {
   isPinned: boolean;
   onPin: (game: Game) => void;
   onUnpin: (game: Game) => void;
+  onGenreClick?: (genre: string) => void;
 };
 
 const getRatingColor = (rating: number) => {
@@ -39,7 +40,7 @@ const formatPlaytime = (minutes: number) => {
   return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
 };
 
-export const GameCard = ({ game, isPinned, onPin, onUnpin }: Props) => {
+export const GameCard = ({ game, isPinned, onPin, onUnpin, onGenreClick }: Props) => {
   const { addSession } = useGameContext();
   const [showSessionModal, setShowSessionModal] = useState(false);
   const [sessionHours, setSessionHours] = useState('');
@@ -138,13 +139,14 @@ export const GameCard = ({ game, isPinned, onPin, onUnpin }: Props) => {
         {game?.genres?.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {game.genres.slice(0, 3).map((genre) => (
-              <span
+              <button
                 key={genre.id}
-                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-600/20 text-blue-300 border border-blue-600/30"
+                onClick={() => onGenreClick?.(genre.name)}
+                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-600/20 text-blue-300 border border-blue-600/30 hover:bg-blue-600/30 hover:text-blue-200 transition-colors cursor-pointer"
               >
                 <Tag className="w-3 h-3 mr-1" />
                 {genre.name}
-              </span>
+              </button>
             ))}
             {game?.genres?.length > 3 && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-600/20 text-gray-300 border border-gray-600/30">

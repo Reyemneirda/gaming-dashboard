@@ -6,9 +6,10 @@ type Props = {
   games: Game[];
   loading?: boolean;
   error?: string;
+  onGenreClick?: (genre: string) => void;
 };
 
-export const GameGrid = ({ games, loading = false, error }: Props) => {
+export const GameGrid = ({ games, loading = false, error, onGenreClick }: Props) => {
   const { pinGame, unpinGame, isGamePinned } = useGameContext();
   if (loading) {
     return (
@@ -70,7 +71,7 @@ export const GameGrid = ({ games, loading = false, error }: Props) => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {games.map((game) => (
-          <GameCard key={game.id} game={game} isPinned={isGamePinned(game.name)} onPin={pinGame} onUnpin={unpinGame} />
+          <GameCard key={game.id} game={game} isPinned={isGamePinned(game.name)} onPin={pinGame} onUnpin={unpinGame} onGenreClick={onGenreClick} />
         ))}
       </div>
       

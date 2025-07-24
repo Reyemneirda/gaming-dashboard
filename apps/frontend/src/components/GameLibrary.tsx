@@ -65,6 +65,10 @@ export const GameLibrary = () => {
     setFilters(newFilters);
   };
 
+  const handleGenreClick = (genre: string) => {
+    setFilters(prev => ({ ...prev, genre }));
+  };
+
   const handlePageChange = (page: number) => {
     loadGames(page);
   };
@@ -123,6 +127,7 @@ export const GameLibrary = () => {
           games={filteredGames}
           loading={loading}
           error={error || undefined}
+          onGenreClick={handleGenreClick}
         />
 
         {!loading && !error && totalPages > 1 && (
