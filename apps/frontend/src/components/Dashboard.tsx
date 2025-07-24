@@ -6,12 +6,14 @@ import { useGameContext } from "../context/GameContext";
 import { apiService } from "../services/api";
 import { Gamepad2, Clock, Star, TrendingUp, Calendar, Trophy, Play } from "lucide-react";
 import { FavoriteGames } from "./Favorites";
+import { TrendingGames } from "./TrendingGames";
 
 export const DashboardHome = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [playingGame, setPlayingGame] = useState<string | null>(null);
   const [sessionMinutes, setSessionMinutes] = useState<Record<string, number>>({});
+  const [lastUpdated, setLastUpdated] = useState<string>("");
   const { gameStats, detailedStats, pinnedItems, refreshData } = useGameContext();
 
   useEffect(() => {
@@ -27,6 +29,30 @@ export const DashboardHome = () => {
     };
     loadGames();
   }, []);
+
+  // Polling mechanism for real-time updates
+  useEffect(() => {
+    const pollLiveData = async () => {
+      try {
+        const liveStats = await apiService.getLiveStats();
+        setLastUpdated(liveStats.last_updated);
+        // Refresh context data if there are updates
+        if (liveStats.timestamp !== lastUpdated) {
+          refreshData();
+        }
+      } catch (error) {
+        console.error("Polling error:", error);
+      }
+    };
+
+    // Initial poll
+    pollLiveData();
+
+    // Set up polling interval (every 30 seconds)
+    const pollInterval = setInterval(pollLiveData, 30000);
+
+    return () => clearInterval(pollInterval);
+  }, [lastUpdated, refreshData]);
 
   const topGames = games.slice(0, 4);
   const chartData = Object.keys(gameStats).reduce((acc, gameName) => {
@@ -150,13 +176,35 @@ export const DashboardHome = () => {
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Gaming Dashboard</h1>
           <p className="text-slate-400">Welcome back! Here's your gaming overview</p>
+          {lastUpdated && (
+            <p className="text-xs text-slate-500 mt-1">
+              Last updated: {new Date(lastUpdated).toLocaleTimeString()}
+            </p>
+          )}
         </div>
-        <div className="flex items-center space-x-2 bg-slate-800/50 backdrop-blur-sm rounded-xl px-4 py-2">
-          <Calendar className="w-4 h-4 text-slate-400" />
-          <span className="text-sm text-slate-300">Last 7 days</span>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={async () => {
+              try {
+                await apiService.refreshData();
+                refreshData();
+              } catch (error) {
+                console.error("Refresh failed:", error);
+              }
+            }}
+            className="flex items-center space-x-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 px-3 py-2 rounded-xl transition-colors text-sm"
+          >
+            <TrendingUp className="w-4 h-4" />
+            <span>Refresh</span>
+          </button>
+          <div className="flex items-center space-x-2 bg-slate-800/50 backdrop-blur-sm rounded-xl px-4 py-2">
+            <Calendar className="w-4 h-4 text-slate-400" />
+            <span className="text-sm text-slate-300">Last 7 days</span>
+          </div>
         </div>
       </div>
 
+      <TrendingGames />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
