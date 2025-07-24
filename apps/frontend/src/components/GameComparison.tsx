@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, X, TrendingUp, PieChart, BarChart3 } from "lucide-react";
+import { X, TrendingUp, PieChart, BarChart3 } from "lucide-react";
 import { searchGames } from "../services/rawg";
 import type { Game } from "../services/rawg";
 import { Line, Doughnut } from 'react-chartjs-2';
@@ -318,7 +318,7 @@ export const GameComparison = () => {
           <div className="card p-6">
             <h2 className="text-xl font-semibold text-white mb-6">Side-by-Side Comparison</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {selectedGames.map((game, index) => (
+              {selectedGames.map((game) => (
                 <div key={game.id} className="space-y-4">
                   <div className="text-center">
                     <img
