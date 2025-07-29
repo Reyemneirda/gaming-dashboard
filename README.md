@@ -43,8 +43,8 @@ bun run dev
 ### Environment setup
 You'll need:
 - Firebase project with Realtime Database enabled
-- RAWG API key (free at rawg.io/apidocs)
-- `.env` file in backend with `FIREBASE_CRED=path/to/credentials.json`
+- RAWG API key (free at rawg.io/apidocs) in a `.env` file in frontend with `VITE_RAWG_KEY=API_KEY`
+- `.env` file at the root of the project with `FIREBASE_CRED=path/to/credentials.json`
 
 ## Key features
 
